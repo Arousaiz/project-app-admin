@@ -23,30 +23,22 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const handlePageChange = (offset: string) => {
-    searchParams.set("offset", offset);
-    setSearchParams(searchParams);
-  };
-  const handleLimitChange = (limit: string) => {
-    searchParams.set("offset", "0");
-    searchParams.set("limit", limit);
-    setSearchParams(searchParams);
-  };
   return (
-    <div className="flex items-center justify-between px-2 py-2">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+    <div
+      className="flex items-center justify-between overflow-clip px-2 py-2"
+      style={{ overflowClipMargin: 1 }}
+    >
+      <div className="text-muted-foreground hidden flex-1 text-sm sm:block">
+        {table.getFilteredSelectedRowModel().rows.length} из{" "}
+        {table.getFilteredRowModel().rows.length} рядов выбрано.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="hidden text-sm font-medium sm:block">Отобразить</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
-              handleLimitChange(value);
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
@@ -61,8 +53,8 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+        <div className="flex w-[120px] items-center justify-center text-sm font-medium">
+          Страница {table.getState().pagination.pageIndex + 1} из{" "}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">
@@ -71,7 +63,6 @@ export function DataTablePagination<TData>({
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
               table.setPageIndex(0);
-              handlePageChange("0");
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -83,12 +74,6 @@ export function DataTablePagination<TData>({
             className="h-8 w-8 p-0"
             onClick={() => {
               table.previousPage();
-              handlePageChange(
-                (
-                  (table.getState().pagination.pageIndex - 1) *
-                  table.getState().pagination.pageSize
-                ).toString()
-              );
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -100,12 +85,6 @@ export function DataTablePagination<TData>({
             className="h-8 w-8 p-0"
             onClick={() => {
               table.nextPage();
-              handlePageChange(
-                (
-                  (table.getState().pagination.pageIndex + 1) *
-                  table.getState().pagination.pageSize
-                ).toString()
-              );
             }}
             disabled={!table.getCanNextPage()}
           >
@@ -117,12 +96,6 @@ export function DataTablePagination<TData>({
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
               table.setPageIndex(table.getPageCount());
-              handlePageChange(
-                (
-                  (table.getPageCount() - 1) *
-                  table.getState().pagination.pageSize
-                ).toString()
-              );
             }}
             disabled={!table.getCanNextPage()}
           >

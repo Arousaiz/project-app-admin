@@ -13,7 +13,8 @@ import { Label } from "@/components/ui/label";
 import { profileSchema } from "~/zodSchemas/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
-import { useSubmit } from "react-router";
+import { useFetcher, useSubmit } from "react-router";
+import Spinner from "~/components/ui/loading-spinner";
 
 const formSchema = profileSchema;
 
@@ -39,36 +40,36 @@ export default function InfoForm({
       lastName: person?.lastName,
       email: person?.email,
       contactNumber: person?.contactNumber,
-      intent: intent,
     },
   });
 
-  const submit = useSubmit();
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state === "submitting";
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submit(values, {
-      encType: "application/json",
-      method: "POST",
-    });
+    fetcher.submit(
+      { ...values, intent: intent },
+      {
+        encType: "application/json",
+        method: "POST",
+      }
+    );
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
-            <h5 className="mb-5 text-lg font-medium lg:mb-6">
-              Personal Information
-            </h5>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Имя</FormLabel>
                     <FormControl>
-                      <Input placeholder="your name" {...field} />
+                      <Input placeholder="Иван" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -79,9 +80,9 @@ export default function InfoForm({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>Фамилия</FormLabel>
                     <FormControl>
-                      <Input placeholder="your last name" {...field} />
+                      <Input placeholder="Иванов" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,9 +93,9 @@ export default function InfoForm({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Почта</FormLabel>
                     <FormControl>
-                      <Input placeholder="your email" {...field} />
+                      <Input placeholder="example@gmail.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,31 +106,26 @@ export default function InfoForm({
                 name="contactNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone (like +375291133369)</FormLabel>
+                    <FormLabel>Телефон (в формате +375291133369)</FormLabel>
                     <FormControl>
-                      <Input placeholder="your phone" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="intent"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <Input className="hidden" placeholder="" {...field} />
+                      <Input placeholder="+375291133369" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            {children}
+            <Button
+              size="sm"
+              type="submit"
+              className="my-4"
+              disabled={isSubmitting || form.formState.isDirty}
+            >
+              {isSubmitting ? <Spinner className=""></Spinner> : "Сохранить"}
+            </Button>
           </div>
         </div>
-      </form>
+      </fetcher.Form>
     </Form>
   );
 }

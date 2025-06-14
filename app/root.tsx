@@ -5,22 +5,18 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
-  type LoaderFunctionArgs,
+  useNavigation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import clsx from "clsx";
-import {
-  PreventFlashOnWrongTheme,
-  ThemeProvider,
-  useTheme,
-} from "remix-themes";
-import { themeSessionResolver } from "./services/sessions.server";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "./components/theme/theme-provider";
+import { AuthProvider } from "./providers/authContext";
+import { queryClient } from "./api/api.config";
+import Spinner from "./components/ui/loading-spinner";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,28 +31,70 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const { getTheme } = await themeSessionResolver(request);
-  return {
-    theme: getTheme(),
-  };
+export async function clientLoader({
+  request,
+  params,
+}: Route.ClientLoaderArgs) {
+  return null;
 }
 
-export function App() {
-  const data = useLoaderData<typeof loader>();
-  const [theme] = useTheme();
+export default function App() {
+  const [queryClientToProvide] = React.useState(() => queryClient);
+
   return (
-    <html lang="en" className={clsx(theme)}>
+    <AuthProvider>
+      <QueryClientProvider client={queryClientToProvide}>
+        <ThemeProvider>
+          <Outlet />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
+  );
+}
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+  const isNavigating = Boolean(navigation.location);
+  const isLoading = Boolean(navigation.state === "loading");
+
+  return (
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <PreventFlashOnWrongTheme ssrTheme={Boolean(data.theme)} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          (function() {
+            try {
+              const theme = localStorage.getItem('vite-ui-theme');
+              const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              const root = document.documentElement;
+              if (theme === 'dark' || (!theme && prefersDark)) {
+                root.classList.add('dark');
+                root.classList.remove('light');
+              } else {
+                root.classList.add('light');
+                root.classList.remove('dark');
+              }
+            } catch (e) {
+              // fail silently
+            }
+          })();
+          `,
+          }}
+        />
         <Meta />
         <Links />
       </head>
       <body>
-        <Outlet />
-        <Toaster />
+        {isNavigating && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 ">
+            <Spinner className="h-52 w-52" />
+          </div>
+        )}
+        {children}
+        <Toaster offset="10vh" position="top-center" />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -64,19 +102,11 @@ export function App() {
   );
 }
 
-export default function AppWithProviders() {
-  const data = useLoaderData<typeof loader>();
-  const [queryClient] = React.useState(() => new QueryClient());
-
+export function HydrateFallback() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        specifiedTheme={data.theme}
-        themeAction="/actions/set-theme"
-      >
-        <App />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50 bg-background text-foreground animate-fade-out">
+      <Spinner className="h-52 w-52" />
+    </div>
   );
 }
 

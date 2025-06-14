@@ -1,29 +1,31 @@
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function viewTableInfoContent({
+export default function ViewTableInfoContent({
   title,
-  object,
+  children,
+  rowData,
 }: {
   title: string;
-  object: Object;
+  rowData: any;
+  children?: React.ReactNode | undefined;
 }) {
   return (
-    <DialogContent>
+    <DialogContent className="max-w-screen-md max-h-screen overflow-y-auto p-6 sm:rounded-lg">
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
-      {Object.entries(object).map(([key, subject], i) => (
-        <div className="flex flex-col my-2">
-          <p className="font-light text-sm">{parseCamelCaseToLabel(key)}</p>
-          <p className="">{subject}</p>
-        </div>
-      ))}
+      <div className="flex flex-col my-2">
+        {children ||
+          Object.entries(rowData).map(([key, value]) => (
+            <div key={key}>
+              <strong className="capitalize">{key}:</strong> {String(value)}
+            </div>
+          ))}
+      </div>
     </DialogContent>
   );
 }

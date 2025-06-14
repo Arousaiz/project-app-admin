@@ -2,21 +2,15 @@ import { Description } from "@radix-ui/react-dialog";
 import { z } from "zod";
 import { addressSchema } from "./profileSchema";
 import type { Address } from "~/api/api.profile";
-import type { MenuItem } from "~/components/columns/menuItem/menuItemColumn";
-import type { User } from "~/components/columns/user/userColumn";
-import type { Restaurant } from "~/components/columns/restaurant/restaurantColumn";
-
-export const OrderSchema = z.object({
-  id: z.string({}).optional(),
-  text: z.string({}),
-  rating: addressSchema.omit({ intent: true }),
-  intent: z.string({}),
-});
+import type { MenuItem } from "~/components/columns/menuItemColumn";
+import type { User } from "~/components/columns/userColumn";
+import type { Restaurant } from "~/components/columns/restaurantColumn";
 
 export type Order = {
   id: string;
   price: number;
   discount: number;
+  comment: string;
   paymentMethod: PaymentMethod;
   orderStatus: OrderStatus;
   orderTime: Date;
@@ -43,7 +37,7 @@ export type OrderItem = {
   menuItem: MenuItem;
 };
 
-export declare enum DeliveryStatus {
+export enum DeliveryStatus {
   AWAITING_CONFIRMATION = "awaiting confirmation",
   IN_TRANSIT = "in transit",
   DELIVERED = "delivered",
@@ -57,7 +51,7 @@ export enum PaymentMethod {
   ONLINE = "online",
 }
 
-export declare enum OrderStatus {
+export enum OrderStatus {
   PLACED = "placed",
   ACCEPTED = "accepted",
   CANCELLED = "cancelled",

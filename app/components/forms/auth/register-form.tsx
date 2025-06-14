@@ -46,9 +46,9 @@ export default function registerForm() {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Имя пользователя</FormLabel>
                 <FormControl>
-                  <Input placeholder="your username" {...field} />
+                  <Input placeholder="username" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -59,24 +59,24 @@ export default function registerForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Пароль</FormLabel>
                 <FormControl>
-                  <Input placeholder="" type="password" {...field} />
+                  <Input placeholder="password" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button className="w-full" type="submit">
-            Register
+            Зарегистрироваться
           </Button>
           <div className="flex items-center justify-center">
-            <p>Already have an account?</p>
+            <p>Уже есть аккаунт?</p>
             <Link
               to="/login"
               className="ml-1 text-sm text-muted-foreground hover:text-foreground"
             >
-              Sign in
+              Войти
             </Link>
           </div>
         </form>

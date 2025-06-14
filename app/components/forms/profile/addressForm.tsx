@@ -13,7 +13,8 @@ import { Label } from "@/components/ui/label";
 import { addressSchema } from "~/zodSchemas/profileSchema";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSubmit } from "react-router";
+import { useFetcher, useSubmit } from "react-router";
+import Spinner from "~/components/ui/loading-spinner";
 
 const formSchema = addressSchema;
 
@@ -36,31 +37,33 @@ export default function AddressForm({
       city: address?.city,
       street: address?.street,
       house: address?.house,
-      intent: intent,
     },
   });
-  const submit = useSubmit();
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state === "submitting";
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submit(values, {
-      encType: "application/json",
-      method: "PUT",
-    });
+    fetcher.submit(
+      { ...values, intent: intent },
+      {
+        encType: "application/json",
+        method: "PUT",
+      }
+    );
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
-            <h5 className="mb-5 text-lg font-medium lg:mb-6">Address</h5>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 ">
               <FormField
                 control={form.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>Город</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -73,7 +76,7 @@ export default function AddressForm({
                 name="street"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Street</FormLabel>
+                    <FormLabel>Улица</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -86,7 +89,7 @@ export default function AddressForm({
                 name="house"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>House</FormLabel>
+                    <FormLabel>Дом</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -94,23 +97,18 @@ export default function AddressForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="intent"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <Input className="hidden" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-            {children}
+            <Button
+              size="sm"
+              type="submit"
+              className="my-4"
+              disabled={isSubmitting || form.formState.isDirty}
+            >
+              {isSubmitting ? <Spinner className=""></Spinner> : "Сохранить"}
+            </Button>
           </div>
         </div>
-      </form>
+      </fetcher.Form>
     </Form>
   );
 }

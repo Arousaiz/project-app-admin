@@ -1,23 +1,43 @@
-import { error } from "console";
+import axios from "axios";
 import { instance } from "./api.config";
-import { redirect } from "react-router";
 
 export type AuthInterface = {
   username: string;
   password: string;
 };
 
+export type UserPayload = {
+  userId: string;
+  username: string;
+  role: string;
+};
+
 export const AuthService = {
-  login(data: AuthInterface): Promise<string> {
+  login(data: AuthInterface) {
     return instance.post("/login", data).then((response) => {
-      return response.data.data.token;
+      return response;
     });
   },
 
   register(data: AuthInterface): Promise<string> {
     return instance.post("/register", data).then((response) => {
-      return response.data.message;
+      return response?.data?.message;
     });
+  },
+
+  checkAuth(): Promise<UserPayload> {
+    return axios
+      .post(
+        "http://localhost:3000/me",
+        {},
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        return response?.data;
+      });
   },
 
   logout() {

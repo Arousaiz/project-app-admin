@@ -24,33 +24,21 @@ export type UpdateUserProfile = Partial<
 export type UpdateAddress = Partial<Pick<Address, "city" | "street" | "house">>;
 
 export const ProfileService = {
-  fetchProfile(token: string): Promise<UserProfile> {
-    return instance
-      .get("/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        return response.data.data;
-      });
+  fetchProfile(): Promise<UserProfile> {
+    return instance.get("/profile").then((response) => {
+      return response.data.data;
+    });
   },
 
-  editInfo(data: UpdateUserProfile, token: string) {
-    return instance
-      .put("/profile", data, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        return response.data;
-      });
+  editInfo(data: UpdateUserProfile) {
+    return instance.put("/profile", data).then((response) => {
+      return response.data;
+    });
   },
 
-  editAddress(data: UpdateAddress, token: string) {
-    return instance
-      .post("/profile/address", data, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        return response.data;
-      });
+  editAddress(data: UpdateAddress) {
+    return instance.post("/profile/address", data).then((response) => {
+      return response.data;
+    });
   },
 };

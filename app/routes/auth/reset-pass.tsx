@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/card";
 import type { Route } from "../../+types/root";
 import ResetPassForm from "~/components/forms/auth/reset-pass-form";
-import { redirectFromAuth } from "~/services/session.server";
+import { AuthService } from "~/api/api.auth";
+import { redirect } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,8 +17,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  return await redirectFromAuth(request);
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const res = await AuthService.checkAuth().catch((error) => {});
+  if (res !== undefined) {
+    return redirect("/");
+  }
 }
 
 export default function ResetPassPage() {

@@ -1,10 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ViewTableInfoContent from "./viewTableInfoContent";
 
 export default function ViewTableInfo({
@@ -23,7 +17,7 @@ export default function ViewTableInfo({
       </DialogTrigger>
       <ViewTableInfoContent
         title={title}
-        object={object}
+        rowData={object}
       ></ViewTableInfoContent>
     </Dialog>
   );

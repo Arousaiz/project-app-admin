@@ -1,25 +1,21 @@
-import { useForm, type Control, type FieldValues } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFetcher, useLoaderData, useSubmit } from "react-router";
-import { CategorySchema } from "~/zodSchemas/categorySchema";
-import type { Category } from "~/components/columns/category/categoryColumn";
+import { useFetcher, useLoaderData } from "react-router";
+import type { Category } from "~/components/columns/categoryColumn";
 import { Textarea } from "~/components/ui/textarea";
-import type { MenuItem } from "~/components/columns/menuItem/menuItemColumn";
+import type { MenuItem } from "~/components/columns/menuItemColumn";
 import { MenuItemSchema } from "~/zodSchemas/menuItemSchema";
-import type { loader } from "~/routes/tables/menuItem/menuItemTable";
+import type { clientLoader } from "~/routes/tables/menuItemTable";
 import {
   Select,
   SelectContent,
@@ -27,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import DialogFooterButtons from "~/components/modals/dialogFooterButtons";
 
 const formSchema = MenuItemSchema;
 
@@ -49,27 +46,28 @@ export default function MenuItemForm({
       description: menuItem?.description,
       price: menuItem?.price,
       category: menuItem?.category,
-      intent: intent,
     },
   });
-  const submit = useSubmit();
+  const fetcher = useFetcher();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     values.category = categories.data.find(
       (c: Category) => c.name === values.category.name
     );
-    console.log(values);
-    submit(values, {
-      encType: "application/json",
-      method: "POST",
-    });
+    fetcher.submit(
+      { ...values, intent: intent },
+      {
+        encType: "application/json",
+        method: "POST",
+      }
+    );
   }
 
-  const { categories } = useLoaderData<typeof loader>();
+  const { categories } = useLoaderData<typeof clientLoader>();
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
             <h5 className="mb-5 text-lg font-medium lg:mb-6">Category</h5>
@@ -139,23 +137,14 @@ export default function MenuItemForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="intent"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <Input className="" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-            {children}
+            <DialogFooterButtons
+              formState={fetcher.state}
+              isDirty={form.formState.isDirty}
+            ></DialogFooterButtons>
           </div>
         </div>
-      </form>
+      </fetcher.Form>
     </Form>
   );
 }

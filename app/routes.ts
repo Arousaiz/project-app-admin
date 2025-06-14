@@ -8,17 +8,18 @@ import {
 export default [
   layout("./layouts/layout.tsx", [
     index("./routes/dashboard/dashboard.tsx"),
-    route("/profile", "./routes/user/profile.tsx"),
-    route("/user-table", "./routes/tables/user/userTable.tsx"),
-    route("/category-table", "./routes/tables/category/categoryTable.tsx"),
-    route(
-      "/restaurant-table",
-      "./routes/tables/restaurant/restaurantTable.tsx"
-    ),
-    route(
-      "//restaurant/:id/menu-items",
-      "./routes/tables/menuItem/menuItemTable.tsx"
-    ),
+    layout("./layouts/settings-layout.tsx", [
+      route("/profile-info", "./routes/user/profile-info.tsx"),
+      route("/profile-address", "./routes/user/profile-address.tsx"),
+    ]),
+    route("/user-table", "./routes/tables/userTable.tsx"),
+    route("/category-table", "./routes/tables/categoryTable.tsx"),
+    route("/cuisine-table", "./routes/tables/cuisinesTable.tsx"),
+    route("/restaurant-table", "./routes/tables/restaurantTable.tsx"),
+    route("/restaurant/:id/menu-items", "./routes/tables/menuItemTable.tsx"),
+    route("/restaurant/:id/orders", "./routes/tables/orderTable.tsx"),
+    route("/restaurant/:id/reviews", "./routes/tables/reviewTable.tsx"),
+    route("/restaurant/:id/promotions", "./routes/tables/promotionsTable.tsx"),
   ]),
   layout("./layouts/authLayout.tsx", [
     route("login", "./routes/auth/login.tsx"),
@@ -26,11 +27,5 @@ export default [
     route("/reset-pass", "./routes/auth/reset-pass.tsx"),
     route("/restore-pass", "./routes/auth/restore-pass.tsx"),
   ]),
-  route("/test", "./routes/home.tsx"),
-  route(
-    "/.well-known/appspecific/:path",
-    "./routes/globalActions/action.stfuplz.ts"
-  ),
-  route("/actions/set-theme", "./routes/globalActions/action.set-theme.ts"),
-  route("/logout", "./routes/logout.ts"),
+  route("/logout", "./routes/logout.tsx"),
 ] satisfies RouteConfig;

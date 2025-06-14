@@ -3,52 +3,52 @@ import { z } from "zod";
 export const authSchema = z.object({
   username: z
     .string({
-      required_error: "Username is required",
+      required_error: "Имя пользователя обязательно",
     })
     .min(6, {
-      message: "Username should be at least 6 characters.",
+      message: "Имя пользователя должно содержать минимум 6 символов.",
     })
     .max(30, {
-      message: "Username should contain at most 30 characters.",
+      message: "Имя пользователя должно содержать не более 30 символов.",
     }),
   password: z
     .string({
-      required_error: "Password is required",
+      required_error: "Пароль обязателен",
     })
     .min(8, {
-      message: "Password should be at least 8 characters",
+      message: "Пароль должен содержать минимум 8 символов",
     })
     .max(32, {
-      message: "Password should containt at most 32 characters.",
+      message: "Пароль должен содержать не более 32 символов.",
     })
     .regex(
       /^(?=.*?[0-9])(?=.*?[A-Za-z])(?=.*?[\^_=\!#\$%&\(\)\*\+\-\.:'/\?@]).{8,32}$/,
       {
-        message: "Password should contain at least 1 symbol, number and letter",
+        message: "Пароль должен содержать хотя бы одну букву, цифру и символ",
       }
     ),
   confirmPassword: z
     .string({
-      required_error: "Password is required",
+      required_error: "Подтверждение пароля обязательно",
     })
     .min(8, {
-      message: "Password should be at least 8 characters",
+      message: "Пароль должен содержать минимум 8 символов",
     })
     .max(32, {
-      message: "Password should containt at most 32 characters.",
+      message: "Пароль должен содержать не более 32 символов.",
     })
     .regex(
       /^(?=.*?[0-9])(?=.*?[A-Za-z])(?=.*?[\^_=\!#\$%&\(\)\*\+\-\.:'/\?@]).{8,32}$/,
       {
-        message: "Password should contain at least 1 symbol, number and letter",
+        message: "Пароль должен содержать хотя бы одну букву, цифру и символ",
       }
     ),
   otpCode: z.string().min(6, {
-    message: "Your one-time password must be 6 characters.",
+    message: "Одноразовый код должен содержать 6 символов.",
   }),
   email: z
     .string({
-      required_error: "Email is required",
+      required_error: "Email обязателен",
     })
-    .email({ message: "Invalid email address" }),
+    .email({ message: "Неверный формат email-адреса" }),
 });

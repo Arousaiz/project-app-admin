@@ -1,5 +1,10 @@
+import type {
+  ColumnFiltersState,
+  PaginationState,
+  SortingState,
+} from "@tanstack/react-table";
 import { instance } from "./api.config";
-import type { Category } from "~/components/columns/category/categoryColumn";
+import type { Category } from "~/components/columns/categoryColumn";
 
 export class CategoryQuery {
   offset: string = "0";
@@ -13,9 +18,23 @@ export class CategoryQuery {
 export type CreateCategory = Required<Omit<Category, "id">>;
 
 export const CategoryService = {
-  fetchCategories(query: CategoryQuery) {
+  fetchCategories(
+    pagination: PaginationState,
+    sorting: SortingState,
+    query?: string
+  ) {
     return instance
-      .get(`/category?limit=${query.limit}&offset=${query.offset}`)
+      .get(
+        `/category?limit=${pagination.pageSize}&offset=${
+          pagination.pageIndex * pagination.pageSize
+        }&${
+          sorting.length !== 0
+            ? `sortBy=${sorting[0].id}&sortOrder=${
+                sorting[0].desc ? "DESC" : "ASC"
+              }&`
+            : ""
+        }${query !== null && query !== "" ? `search=${query}&` : ""}`
+      )
       .then((res) => res.data);
   },
 
@@ -23,30 +42,20 @@ export const CategoryService = {
     return instance.get(`/category/all`).then((res) => res.data);
   },
 
-  createCategory(category: CreateCategory, token: string) {
-    return instance
-      .post(`/category/`, category, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        return res.data;
-      });
+  createCategory(category: CreateCategory) {
+    return instance.post(`/category/`, category).then((res) => {
+      return res.data;
+    });
   },
 
-  updateCategory(category: Category, token: string) {
+  updateCategory(category: Category) {
     return instance
-      .put(`/category/${category.id}`, category, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .put(`/category/${category.id}`, category)
       .then((res) => res.data);
   },
 
-  deleteCategory(id: string, token: string) {
+  deleteCategory(id: string) {
     console.log(id);
-    return instance
-      .delete(`/category/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => res.data);
+    return instance.delete(`/category/${id}`).then((res) => res.data);
   },
 };

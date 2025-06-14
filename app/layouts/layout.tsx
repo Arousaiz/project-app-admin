@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "~/components/sidebar/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Outlet, useMatches } from "react-router";
-import { ModeToggle } from "~/components/toggle-mode";
+import { ModeToggle } from "~/components/theme/toggle-mode";
 
 export default function Page() {
   const matches = useMatches();
@@ -37,7 +37,7 @@ export default function Page() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">Home</BreadcrumbLink>
+                    <BreadcrumbLink href="/">Главная</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
@@ -53,7 +53,7 @@ export default function Page() {
             </div>
           </div>
         </header>
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 w-full">
+        <div className="p-2 mx-auto max-w-(--breakpoint-2xl) md:p-6 w-full">
           <div className="rounded-2xl border border-border bg-background p-5  lg:p-6 min-h-dvh">
             <Outlet />
           </div>

@@ -14,8 +14,9 @@ import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetcher, useSubmit } from "react-router";
 import { CategorySchema } from "~/zodSchemas/categorySchema";
-import type { Category } from "~/components/columns/category/categoryColumn";
+import type { Category } from "~/components/columns/categoryColumn";
 import { Textarea } from "~/components/ui/textarea";
+import DialogFooterButtons from "~/components/modals/dialogFooterButtons";
 
 const formSchema = CategorySchema;
 
@@ -36,31 +37,33 @@ export default function CategoryForm({
       id: category?.id,
       name: category?.name,
       description: category?.description,
-      intent: intent,
     },
   });
-  const submit = useSubmit();
+  const fetcher = useFetcher();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submit(values, {
-      encType: "application/json",
-      method: "POST",
-    });
+    fetcher.submit(
+      { ...values, intent: intent },
+      {
+        encType: "application/json",
+        method: "POST",
+      }
+    );
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
-            <h5 className="mb-5 text-lg font-medium lg:mb-6">Category</h5>
+            <h5 className="mb-5 text-lg font-medium lg:mb-6">Категория</h5>
             <div className="grid grid-cols-1 gap-x-6 gap-y-5">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Название</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -73,7 +76,7 @@ export default function CategoryForm({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Описание</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -81,23 +84,14 @@ export default function CategoryForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="intent"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <Input className="" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-            {children}
+            <DialogFooterButtons
+              formState={fetcher.state}
+              isDirty={form.formState.isDirty}
+            ></DialogFooterButtons>
           </div>
         </div>
-      </form>
+      </fetcher.Form>
     </Form>
   );
 }

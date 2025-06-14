@@ -8,14 +8,8 @@ import {
 } from "@/components/ui/card";
 import type { Route } from "../../+types/root";
 import RegisterForm from "~/components/forms/auth/register-form";
-import {
-  commitSession,
-  getSession,
-  redirectFromAuth,
-} from "~/services/session.server";
 import { AuthService } from "~/api/api.auth";
-import { redirect, useLoaderData } from "react-router";
-import ErrorAlert from "~/components/error-alert";
+import { redirect, useActionData, useLoaderData } from "react-router";
 import { toast } from "sonner";
 import { useEffect } from "react";
 
@@ -26,50 +20,37 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  return await redirectFromAuth(request);
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const res = await AuthService.checkAuth().catch((error) => {});
+  if (res !== undefined) {
+    return redirect("/");
+  }
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  let error = "Something went wrong. Try again later.";
+export async function clientAction({ request }: Route.ClientActionArgs) {
   const data = await request.json();
 
-  const message = await AuthService.register(data).catch((error) => {
-    console.log(error);
-    error = error?.response?.data?.message;
-  });
+  const res = await AuthService.register(data);
 
-  if (!message) {
-    session.flash("error", error);
-
-    return redirect("/register", {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
+  if (res !== undefined) {
+    return redirect("/login");
   }
 
-  return redirect("/login");
+  return null;
 }
 
 export default function Register() {
-  const { error } = useLoaderData<typeof loader>();
-  useEffect(() => {
-    if (error) {
-      toast(error);
-    }
-  }, [error]);
   return (
     <div>
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
-              Welcome!
+              Добро пожаловать!
             </CardTitle>
             <CardDescription>
-              Enter username and password below to sign up for a new account
+              Введите имя пользователя и пароль для того, чтобы создать новый
+              аккаунт.
             </CardDescription>
           </CardHeader>
           <CardContent>

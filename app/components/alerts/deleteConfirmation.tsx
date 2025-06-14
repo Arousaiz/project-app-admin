@@ -9,23 +9,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useSubmit } from "react-router";
+import { useFetcher, useSubmit } from "react-router";
 
 export default function DeleteConfirmation({ id }: { id: string }) {
-  const submit = useSubmit();
+  const fetcher = useFetcher();
   return (
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+        <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
         <AlertDialogDescription>
-          This action cannot be undone. This will permanently delete this data
+          Это действие невозможно отменить. Данные будут утеряны навсегда.
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogCancel>Отмена</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            submit(
+            fetcher.submit(
               { id: id, intent: "delete" },
               {
                 encType: "application/json",
@@ -34,7 +34,7 @@ export default function DeleteConfirmation({ id }: { id: string }) {
             );
           }}
         >
-          Continue
+          Продолжить
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

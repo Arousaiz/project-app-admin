@@ -47,10 +47,10 @@ export default function LoginForm() {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Имя пользователя</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="your username"
+                    placeholder="username"
                     autoComplete="username"
                     {...field}
                   />
@@ -65,17 +65,17 @@ export default function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Пароль</FormLabel>
                   <Link
                     to={"/restore-pass"}
                     className="ml-auto text-sm text-muted-foreground hover:text-foreground"
                   >
-                    Forgot password?
+                    Забыли пароль?
                   </Link>
                 </div>
                 <FormControl>
                   <Input
-                    placeholder=""
+                    placeholder="password"
                     type="password"
                     autoComplete="password"
                     {...field}
@@ -86,15 +86,15 @@ export default function LoginForm() {
             )}
           />
           <Button className="w-full" type="submit">
-            Login
+            Войти в систему
           </Button>
           <div className="flex items-center justify-center">
-            <p>Don't have an account?</p>
+            <p>Ещё нет аккаунта?</p>
             <Link
               to="/register"
               className="ml-1 text-sm text-muted-foreground hover:text-foreground"
             >
-              Sign up
+              Зарегистрироваться
             </Link>
           </div>
         </form>
