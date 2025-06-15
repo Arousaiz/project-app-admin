@@ -63,11 +63,11 @@ export async function clientAction({ request }: Route.ActionArgs) {
   }
 
   if (isNullOrUndefined(response)) {
-    toast.error("Something went wrong");
+    toast.error("Произошла ошибка");
     return { message: "Something went wrong" };
   }
 
-  toast.info(response.message);
+  toast.info("Действие успешно");
 
   return { response };
 }

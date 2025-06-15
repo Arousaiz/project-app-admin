@@ -43,6 +43,7 @@ export const MenuItemService = {
         name: menuItem.name,
         description: menuItem.description,
         price: menuItem.price,
+        img_url: menuItem.img_url,
         categoryId: menuItem.category.id,
       })
       .then((res) => {
@@ -56,6 +57,7 @@ export const MenuItemService = {
         name: menuItem.name,
         description: menuItem.description,
         price: menuItem.price,
+        img_url: menuItem.img_url,
         categoryId: menuItem.category.id,
       })
       .then((res) => res.data);

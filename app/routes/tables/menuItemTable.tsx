@@ -28,12 +28,12 @@ import type { ApiData } from "~/api/types";
 import type { AxiosError } from "axios";
 
 export const handle = {
-  pageTitle: "Menu Item Table",
+  pageTitle: "Таблица меню ресторана",
 };
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Menu Item table" },
+    { title: "Таблица меню ресторана" },
     { name: "description", content: "Menu Item table page" },
   ];
 }
@@ -94,8 +94,11 @@ export async function clientAction({
   }
 
   if (isNullOrUndefined(response)) {
+    toast.error("Произошла ошибка");
     return { message: "Something went wrong" };
   }
+
+  toast.info("Действие успешно");
 
   return response;
 }
@@ -180,7 +183,7 @@ export default function tableExamplePage() {
     <HydrationBoundary state={dehydratedState}>
       <div>
         <div className="flex justify-between">
-          <p className="text-3xl">Restaurants</p>
+          <p className="text-3xl">Предметы меню ресторана</p>
           <EntityCreateDialog>
             <MenuItemForm intent={"create"}></MenuItemForm>
           </EntityCreateDialog>

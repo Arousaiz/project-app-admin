@@ -13,6 +13,7 @@ export const PromotionsSchema = z.object({
     .max(100, {
       message: "Название акции должно содержать не более 100 символов",
     }),
+  img_url: z.string().optional(),
   description: z
     .string({
       required_error: "Описание акции обязательно",

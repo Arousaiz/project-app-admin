@@ -13,6 +13,7 @@ export const MenuItemSchema = z.object({
     .max(100, {
       message: "Название блюда должно содержать не более 100 символов",
     }),
+  img_url: z.string().optional(),
   description: z
     .string({
       required_error: "Описание блюда обязательно",

@@ -15,7 +15,6 @@ import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetcher, useLoaderData, useSubmit } from "react-router";
 import { CategorySchema } from "~/zodSchemas/categorySchema";
-import type { Category } from "~/components/columns/category/categoryColumn";
 import { Textarea } from "~/components/ui/textarea";
 import type { MenuItem } from "~/components/columns/menuItemColumn";
 import { MenuItemSchema } from "~/zodSchemas/menuItemSchema";
@@ -35,6 +34,9 @@ import {
 } from "~/components/columns/promotionsColumn";
 import { Checkbox } from "~/components/ui/checkbox";
 import { format, parseISO } from "date-fns";
+import type { Category } from "~/components/columns/categoryColumn";
+import { toast } from "sonner";
+import { instance } from "~/api/api.config";
 
 const formSchema = PromotionsSchema;
 
@@ -107,6 +109,64 @@ export default function PromotionForm({
                       <Input type="text" {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="img_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Изображение</FormLabel>
+                    <FormControl>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          try {
+                            const response = await instance.post(
+                              "/presigned-url",
+                              {
+                                type: "restaurant",
+                                entityId: "Test",
+                                fileName: file.name,
+                                contentType: file.type,
+                              }
+                            );
+
+                            const { key, url } = response.data;
+
+                            const uploadResult = await fetch(url, {
+                              method: "PUT",
+                              headers: { "Content-Type": file.type },
+                              body: file,
+                            });
+
+                            if (!uploadResult.ok) {
+                              toast.error("Ошибка загрузки изображения");
+                              return;
+                            }
+
+                            field.onChange(key);
+                          } catch (error) {
+                            toast.error(
+                              "Ошибка при получении URL для загрузки"
+                            );
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {field.value && (
+                      <img
+                        src={`https://pub-96480823ba5d4f44bb4d8cd67febd2f1.r2.dev/${field.value}`}
+                        alt="Uploaded image"
+                        className="mt-2 max-w-xs rounded"
+                      />
+                    )}
                   </FormItem>
                 )}
               />

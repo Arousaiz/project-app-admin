@@ -24,6 +24,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import DialogFooterButtons from "~/components/modals/dialogFooterButtons";
+import { instance } from "~/api/api.config";
+import { toast } from "sonner";
 
 const formSchema = MenuItemSchema;
 
@@ -70,14 +72,14 @@ export default function MenuItemForm({
       <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
-            <h5 className="mb-5 text-lg font-medium lg:mb-6">Category</h5>
+            <h5 className="mb-5 text-lg font-medium lg:mb-6">Предмет меню</h5>
             <div className="grid grid-cols-1 gap-x-6 gap-y-5">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Название</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -87,10 +89,68 @@ export default function MenuItemForm({
               />
               <FormField
                 control={form.control}
+                name="img_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Изображение</FormLabel>
+                    <FormControl>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          try {
+                            const response = await instance.post(
+                              "/presigned-url",
+                              {
+                                type: "restaurant",
+                                entityId: "Test",
+                                fileName: file.name,
+                                contentType: file.type,
+                              }
+                            );
+
+                            const { key, url } = response.data;
+
+                            const uploadResult = await fetch(url, {
+                              method: "PUT",
+                              headers: { "Content-Type": file.type },
+                              body: file,
+                            });
+
+                            if (!uploadResult.ok) {
+                              toast.error("Ошибка загрузки изображения");
+                              return;
+                            }
+
+                            field.onChange(key);
+                          } catch (error) {
+                            toast.error(
+                              "Ошибка при получении URL для загрузки"
+                            );
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {field.value && (
+                      <img
+                        src={`https://pub-96480823ba5d4f44bb4d8cd67febd2f1.r2.dev/${field.value}`}
+                        alt="Uploaded image"
+                        className="mt-2 max-w-xs rounded"
+                      />
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Описание</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -103,7 +163,7 @@ export default function MenuItemForm({
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel>Цена</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -116,7 +176,7 @@ export default function MenuItemForm({
                 name="category.name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>Категория</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}

@@ -26,6 +26,7 @@ import { Badge } from "~/components/ui/badge";
 export type Restaurant = {
   id: string;
   name: string;
+  img_url: string;
   cuisines: Cuisines[];
   phone: string;
   openTime: Date;
@@ -68,6 +69,33 @@ export const RestaurantColumns: ColumnDef<Restaurant>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Название" />
     ),
+  },
+  {
+    accessorKey: "img_url",
+    header: "Изображение",
+    cell: ({ row }) => {
+      const img_url: string | undefined = row.getValue("img_url");
+
+      const fullUrl = img_url
+        ? `https://pub-96480823ba5d4f44bb4d8cd67febd2f1.r2.dev/${img_url}`
+        : null;
+
+      return (
+        <div className="flex items-center justify-center mt-2">
+          {fullUrl ? (
+            <img
+              src={fullUrl}
+              alt="Uploaded"
+              className="w-20 h-20 object-cover rounded border"
+            />
+          ) : (
+            <div className="w-20 h-20 flex items-center justify-center text-gray-400 text-sm border rounded bg-gray-100">
+              Нет фото
+            </div>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "cuisines",

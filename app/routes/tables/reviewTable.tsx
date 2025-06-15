@@ -32,12 +32,12 @@ import type { Review } from "~/zodSchemas/reviewSchema";
 import { reviewColumns } from "~/components/columns/reviewColumn";
 
 export const handle = {
-  pageTitle: "Restaurant Table",
+  pageTitle: "Таблица отзывов ресторана",
 };
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Restaurant table" },
+    { title: "Таблица отзывов ресторана" },
     { name: "description", content: "Restaurant table page" },
   ];
 }
@@ -77,8 +77,11 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }
 
   if (isNullOrUndefined(response)) {
+    toast.error("Произошла ошибка");
     return { message: "Something went wrong" };
   }
+
+  toast.info("Действие успешно");
 
   return response;
 }

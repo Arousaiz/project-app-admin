@@ -30,12 +30,12 @@ import type { Order } from "~/zodSchemas/orderSchema";
 import { orderColumns } from "~/components/columns/orderColumn";
 
 export const handle = {
-  pageTitle: "Restaurant Table",
+  pageTitle: "Таблица заказов в ресторане",
 };
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Restaurant table" },
+    { title: "Таблица заказов в ресторане" },
     { name: "description", content: "Restaurant table page" },
   ];
 }
@@ -75,8 +75,11 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }
 
   if (isNullOrUndefined(response)) {
+    toast.error("Произошла ошибка");
     return { message: "Something went wrong" };
   }
+
+  toast.info("Действие успешно");
 
   return response;
 }

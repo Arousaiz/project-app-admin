@@ -83,6 +83,7 @@ export const RestaurantService = {
       .post(`/restaurants/create`, {
         name: restaurant.name,
         cuisineIds: cuisineIds,
+        img_url: restaurant.img_url,
         phone: restaurant.phone,
         openTime: restaurant.openTime,
         closeTime: restaurant.closeTime,
@@ -98,6 +99,7 @@ export const RestaurantService = {
       .put(`/restaurants/${restaurant.id}`, {
         name: restaurant.name,
         cuisineIds: cuisineIds,
+        img_url: restaurant.img_url,
         phone: restaurant.phone,
         openTime: restaurant.openTime,
         closeTime: restaurant.closeTime,

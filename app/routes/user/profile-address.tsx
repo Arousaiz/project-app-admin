@@ -33,26 +33,34 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const data = await request.json();
   let errorMsg = "Something went wrong";
 
-  if (data.intent === "update-info") {
-    const response = await ProfileService.editInfo(data).catch((error) => {
-      errorMsg = error?.response?.data?.message;
-    });
+  try {
+    if (data.intent === "update-info") {
+      const response = await ProfileService.editInfo(data).catch((error) => {
+        errorMsg = error?.response?.data?.message;
+      });
 
-    if (response === null || response === undefined) {
-      return { message: errorMsg.toString() };
+      if (response === null || response === undefined) {
+        return { message: errorMsg.toString() };
+      }
+
+      toast.info("Успешно обновлено");
+
+      return response;
+    } else if (data.intent === "update-address") {
+      const response = await ProfileService.editAddress(data).catch((error) => {
+        errorMsg = error?.response?.data?.message;
+      });
+
+      if (response === null || response === undefined) {
+        return { message: errorMsg.toString() };
+      }
+      toast.info("Успешно обновлено");
+
+      return response;
     }
-
-    return response;
-  } else if (data.intent === "update-address") {
-    const response = await ProfileService.editAddress(data).catch((error) => {
-      errorMsg = error?.response?.data?.message;
-    });
-
-    if (response === null || response === undefined) {
-      return { message: errorMsg.toString() };
-    }
-
-    return response;
+  } catch (erroor) {
+    console.log(erroor);
+    toast.error("Произошла ошибка");
   }
 
   return { message: errorMsg.toString() };

@@ -28,12 +28,12 @@ import type { ApiData } from "~/api/types";
 import { CuisinesService } from "~/api/api.cuisines";
 
 export const handle = {
-  pageTitle: "Restaurant Table",
+  pageTitle: "Таблица ресторанов",
 };
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Restaurant table" },
+    { title: "Таблица ресторанов" },
     { name: "description", content: "Restaurant table page" },
   ];
 }
@@ -73,8 +73,11 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }
 
   if (isNullOrUndefined(response)) {
+    toast.error("Произошла ошибка");
     return { message: "Something went wrong" };
   }
+
+  toast.info("Действие успешно");
 
   return response;
 }
@@ -96,6 +99,25 @@ const RestaurantFilterOptions: DataTableFilterOptions[] = [
       {
         label: "Японская",
         value: "japanese",
+      },
+    ],
+  },
+  {
+    id: "city",
+    title: "Город",
+    type: "select",
+    options: [
+      {
+        label: "Гродно",
+        value: "Гродно",
+      },
+      {
+        label: "Минск",
+        value: "Минск",
+      },
+      {
+        label: "Витебск",
+        value: "Витебск",
       },
     ],
   },
@@ -172,7 +194,7 @@ export default function tableExamplePage() {
     <HydrationBoundary state={dehydratedState}>
       <div>
         <div className="flex justify-between">
-          <p className="text-3xl">Restaurants</p>
+          <p className="text-3xl">Рестораны</p>
           <EntityCreateDialog>
             <RestaurantForm intent={"create"}></RestaurantForm>
           </EntityCreateDialog>

@@ -22,6 +22,16 @@ import { toast } from "sonner";
 
 const formSchema = RestaurantSchema;
 
+export function formatTimeToHHMM(
+  time: string | Date | undefined | null
+): string | undefined {
+  if (!time) return undefined;
+  const date = typeof time === "string" ? new Date(`1970-01-01T${time}`) : time;
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export default function RestaurantForm({
   restaurant,
   method,
@@ -40,8 +50,8 @@ export default function RestaurantForm({
       name: restaurant?.name,
       cuisines: restaurant?.cuisines,
       phone: restaurant?.phone,
-      openTime: restaurant?.openTime.toString(),
-      closeTime: restaurant?.closeTime.toString(),
+      openTime: formatTimeToHHMM(restaurant?.openTime),
+      closeTime: formatTimeToHHMM(restaurant?.closeTime),
       address: restaurant?.address,
     },
   });
@@ -64,7 +74,7 @@ export default function RestaurantForm({
       <fetcher.Form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="overflow-y-auto px-2 pb-3">
           <div className="mt-7">
-            <h5 className="mb-5 text-lg font-medium lg:mb-6">Category</h5>
+            <h5 className="mb-5 text-lg font-medium lg:mb-6">Ресторан</h5>
             <div className="grid grid-cols-1 gap-x-6 gap-y-5">
               <FormField
                 control={form.control}

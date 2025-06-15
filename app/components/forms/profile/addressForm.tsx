@@ -102,7 +102,7 @@ export default function AddressForm({
               size="sm"
               type="submit"
               className="my-4"
-              disabled={isSubmitting || form.formState.isDirty}
+              disabled={isSubmitting}
             >
               {isSubmitting ? <Spinner className=""></Spinner> : "Сохранить"}
             </Button>
